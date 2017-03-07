@@ -1,0 +1,13 @@
+<h1>Miniscience</h1>
+<h2>Publications</h2>
+
+{%  for publication in publications %}
+    <p>
+    <b>{{ publication.title }}</b><br />
+    Publication date: {{ publication.pub_date }}<br />
+    Authors:
+    {% for publication in publication.author.all %}
+        {{ publication }}{%  if not forloop.last %},{% endif %}
+    {% endfor %}
+    <p>
+{%  endfor %}
