@@ -1,6 +1,6 @@
 # miniscience
 
-## miniscience mdule
+## miniscience module
 Pylint score: 9.60/10
 
 ## publications module
