@@ -35,3 +35,5 @@ Pylint score: 9.60/10
 
 ### publications module
 Pylint score: 6.79/10
+
+(c) All rights reserved. ECOLE POLYTECHNIQUE FEDERALE DE LAUSANNE, Switzerland, VPSI, 2017
