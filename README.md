@@ -1,4 +1,4 @@
-# MiniScience > README
+ # MiniScience > README
 
 ## Overview
 
@@ -11,7 +11,7 @@
 ...
 
 ### How do I check that everything went well ?
-
+ 
 ...
 
 ## Description
@@ -44,8 +44,8 @@ Pylint score: 6.79/10
 
 #### Show all authors
 
-URL: /api/authors
-Method: GET
+URL: /api/authors  
+Method: GET  
 URL params: None
 Data params: None
 Response Codes: Success (200 OK)
@@ -64,11 +64,13 @@ URL: /api/authors
 Method: POST
 URL params: None
 Data params:
+
     {
       "first_name": "First name",
       "last_name": "Last name",
       "email": "name@provider.com"
     }
+    
 Response Codes: Success (201 Created)
 
 #### Edit an author
@@ -77,11 +79,13 @@ URL: /api/authors/:id
 Method: PUT
 URL params: id=[integer]
 Data params:
+
     {
       "first_name": "First name",
       "last_name": "Last name",
       "email": "name@provider.com"
     }
+    
 Response Codes: Success (201 Created)
 
 #### Delete an author
@@ -125,6 +129,7 @@ Data params:
             "http://127.0.0.1:8000/publications/api/authors/<id>/"
         ]
     }
+    
 Response Codes: Success (201 Created)
 
 #### Edit a publication
@@ -133,6 +138,7 @@ URL: /api/publications/:id
 Method: PUT
 URL params: id=[integer]
 Data params:
+
     {
         "title": "Title",
         "pub_date": "YYYY-mm-dd",
