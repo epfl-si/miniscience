@@ -11,5 +11,6 @@ router.register(r'publications', views.PublicationViewSet)
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^api/', include(router.urls)),
+    url(r'^api/authors/(?P<pk>[0-9]+)/publications/$', views.author_publications),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
