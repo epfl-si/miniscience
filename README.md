@@ -64,11 +64,13 @@ URL: /api/authors
 Method: POST  
 URL params: None  
 Data params:
+
     {
       "first_name": "First name",
       "last_name": "Last name",
       "email": "name@provider.com"
     }
+    
 Response Codes: Success (201 Created)
 
 #### Edit an author
@@ -77,11 +79,13 @@ URL: /api/authors/:id
 Method: PUT  
 URL params: id=[integer]  
 Data params:
+
     {
       "first_name": "First name",
       "last_name": "Last name",
       "email": "name@provider.com"
     }
+    
 Response Codes: Success (201 Created)
 
 #### Delete an author
@@ -114,6 +118,7 @@ Response Codes: Success (200 OK), Failure (404 Not Found)
 
 URL: /api/publications  
 Method: POST  
+
 URL params: None  
 Data params:
 
@@ -125,6 +130,7 @@ Data params:
             "http://127.0.0.1:8000/publications/api/authors/<id>/"
         ]
     }
+    
 Response Codes: Success (201 Created)
 
 #### Edit a publication
@@ -133,6 +139,7 @@ URL: /api/publications/:id
 Method: PUT  
 URL params: id=[integer]  
 Data params:
+
     {
         "title": "Title",
         "pub_date": "YYYY-mm-dd",
@@ -141,6 +148,7 @@ Data params:
             "http://127.0.0.1:8000/publications/api/authors/<id>/"
         ]
     }
+    
 Response Codes: Success (201 Created)
 
 #### Delete a publication
