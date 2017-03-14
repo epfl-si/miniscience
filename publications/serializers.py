@@ -1,3 +1,4 @@
+# (c) All rights reserved. ECOLE POLYTECHNIQUE FEDERALE DE LAUSANNE, Switzerland, VPSI, 2017
 from rest_framework import serializers
 
 from .models import Author, Publication
