@@ -64,11 +64,11 @@ URL: /api/authors
 Method: POST
 URL params: None
 Data params:
-{
-  "first_name": "First name",
-  "last_name": "Last name",
-  "email": "name@provider.com"
-}
+    {
+      "first_name": "First name",
+      "last_name": "Last name",
+      "email": "name@provider.com"
+    }
 Response Codes: Success (201 Created)
 
 #### Edit an author
@@ -77,11 +77,11 @@ URL: /api/authors/:id
 Method: PUT
 URL params: id=[integer]
 Data params:
-{
-  "first_name": "First name",
-  "last_name": "Last name",
-  "email": "name@provider.com"
-}
+    {
+      "first_name": "First name",
+      "last_name": "Last name",
+      "email": "name@provider.com"
+    }
 Response Codes: Success (201 Created)
 
 #### Delete an author
