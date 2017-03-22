@@ -6,9 +6,21 @@ from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
+from rest_framework.views import APIView
 
 from .models import Author, Publication
 from .serializers import AuthorSerializer, PublicationSerializer
+
+
+class AuthorList(APIView):
+    """
+    List all snippets, or create a new snippet.
+    """
+
+    def get(self, request, format=None):
+        authors = Author.objects.all()
+        serializer = AuthorSerializer(authors, many=True)
+        return Response(serializer.data)
 
 
 class AuthorViewSet(viewsets.ModelViewSet):
@@ -31,7 +43,7 @@ class PublicationViewSet(viewsets.ModelViewSet):
 def author_publications(request, pk):
     if request.method == 'GET':
         queryset = Publication.objects.filter(author__id=pk)
-        serializer = PublicationSerializer(queryset, many=True, context={'request':request})
+        serializer = PublicationSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
 
     elif request.method == 'POST':
