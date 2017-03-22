@@ -1,4 +1,5 @@
 # MiniScience > README
+[![Travis built status](https://travis-ci.org/ffy/miniscience.svg?branch=master)](https://travis-ci.org/ffy/miniscience)
 
 ## Overview
 
