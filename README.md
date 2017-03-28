@@ -5,15 +5,22 @@
 
 ### What is this repository for?
 
-...
+Create a publication cluster factory: from import to presentation to the author, all through microservices and APIs.
 
 ### How do I get set up? ###
 
-...
+```
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
 
 ### How do I check that everything went well ?
 
-...
+```
+python manage.py test
+```
 
 ## Description
 
