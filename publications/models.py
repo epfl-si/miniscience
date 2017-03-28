@@ -4,7 +4,7 @@ from django.db import models
 
 class Author(models.Model):
     """ EPFL author? Cluster result ?
-        TODO: Define in two sentences what the class stands for
+        This class represents an author in the institutional archive.
     """
     # XXX: names length might be too small. Confirm from query on Infoscience DB (ask mysql dump to CFR or JD)
     first_name = models.CharField(max_length=30)
@@ -12,9 +12,9 @@ class Author(models.Model):
     email = models.EmailField(blank=True)
 
     def __str__(self):
-        """ standard function used in ....
-        TODO: add email (Full name will probably not be sufficient to identify author)"""
-        return "%s %s" % (self.first_name, self.last_name)
+        """ Standard function used to compute the “informal” string representation of an object.
+        """
+        return "%s %s (%s)" % (self.first_name, self.last_name, self.email)
 
 
 class Publication(models.Model):
@@ -29,6 +29,6 @@ class Publication(models.Model):
     author = models.ManyToManyField(Author)
 
     def __str__(self):
-        """ standard function used in ....
+        """ Standard function used to compute the “informal” string representation of an object.
         TODO: add DOI, (pub_date ?)"""
-        return self.title
+        return "%s, %s" % (self.title, self.pub_date)
