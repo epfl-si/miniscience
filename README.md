@@ -9,7 +9,12 @@
 
 ### How do I get set up? ###
 
-...
+```
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+``
 
 ### How do I check that everything went well ?
 
