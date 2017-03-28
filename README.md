@@ -5,7 +5,7 @@
 
 ### What is this repository for?
 
-Create a publicatoin cluster factory: from import to presentation to the author, all through microservices and APIs.
+Create a publication cluster factory: from import to presentation to the author, all through microservices and APIs.
 
 ### How do I get set up? ###
 
