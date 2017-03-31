@@ -9,14 +9,23 @@ Create a publication cluster factory: from import to presentation to the author,
 
 ### How do I get set up? ###
 
+Either with Docker
+
 ```
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py createsuperuser
-python manage.py runserver
+make docker-init
+```
+
+Or without
+
+```
+make init run
 ```
 
 ### How do I check that everything went well ?
+
+Either go to [localhost](http://localhost:8000)
+
+Or (if the server runs localy) run the test
 
 ```
 python manage.py test
