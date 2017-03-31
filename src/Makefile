@@ -9,6 +9,10 @@ run:
 test:
 	python manage.py test
 
+docker-rebuild:
+	docker-compose down
+	docker-compose up -d --build
+
 docker-init:
 	docker-compose up -d
 	docker exec web python manage.py makemigrations
