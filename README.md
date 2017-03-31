@@ -35,25 +35,23 @@ python manage.py test
 
 ## Objectives
 
-...
+Base repo for microservices that will suppor the factory-chain to create cluster of publications.
 
 ## Specifications
 
-...
+See [Trello board](https://trello.com/b/3Mq7J5sK/publichain)
 
 ## Ratings
 
 ### How do I rate the application ?
 
+Install pylint first (```pip install pylint```), and run
+
+```
+pylint miniscience publications
 ...
-
-### miniscience module
-Pylint score: 9.60/10
-
-### publications module
-Pylint score: 6.79/10
-
-(c) All rights reserved. ECOLE POLYTECHNIQUE FEDERALE DE LAUSANNE, Switzerland, VPSI, 2017
+Your code has been rated at 1.78/10
+```
 
 ## API documentation
 
@@ -207,3 +205,5 @@ Method: GET
 URL params: id_author=[integer], id_publication=[integer]  
 Data params: None  
 Response Codes: Success (200 OK), Failure (404 Not Found)
+
+(c) All rights reserved. ECOLE POLYTECHNIQUE FEDERALE DE LAUSANNE, Switzerland, VPSI, 2017
