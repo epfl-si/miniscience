@@ -12,13 +12,25 @@ Create a publication cluster factory: from import to presentation to the author,
 Either with Docker
 
 ```
+cd miniscience/src
 make docker-init
+
+# or (if no make)
+cd miniscience
+docker-compose up -d
+docker exec web make init
 ```
 
 Or without
 
 ```
 make init run
+
+# or (if no make)
+python manage.py makemigrations
+python manage.py migrate
+echo "from django.contrib.auth.models import User; User.objects.filter(email='admin@example.com').delete(); User.objects.create_superuser('admin', 'admin@example.com', 'admin123')" | python manage.py shell
+
 ```
 
 ### How do I check that everything went well ?
