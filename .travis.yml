@@ -3,6 +3,12 @@ language: python
 python:
   - "3.5"
 
-install: "pip install -r requirements.txt"
+install:
+  - "pip install pylint"
+  - "pip install -r requirements.txt"
 
 script: cd src && ./manage.py test
+
+after_success:
+  - pylint src > /tmp/pylint-report.html
+  - curl -v -m 120 -X POST -F travis-job-id=$TRAVIS_JOB_ID -F pylint-report=@/tmp/pylint-report.html https://dlint.ebreton.ch/travis
