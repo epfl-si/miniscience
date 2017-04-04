@@ -1,5 +1,5 @@
 # MiniScience > README
-[![Travis built status](https://travis-ci.org/ffy/miniscience.svg?branch=master)](https://travis-ci.org/ffy/miniscience)
+[![Travis built status](https://travis-ci.org/epfl-idevelop/miniscience.svg?branch=master)](https://travis-ci.org/epfl-idevelop/miniscience)
 
 ## Overview
 
