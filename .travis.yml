@@ -11,4 +11,4 @@ script: cd src && ./manage.py test
 
 after_success:
   - pylint src > /tmp/pylint-report.html
-  - curl -v -m 120 -X POST -F travis-job-id=$TRAVIS_JOB_ID -F pylint-report=@/tmp/pylint-report.html https://dlint.ebreton.ch/travis
+  - curl -v -m 120 -X POST -F travis-job-id=$TRAVIS_JOB_ID -F pylint-report=@/tmp/pylint-report.html https://dlint.breton.ch/travis
