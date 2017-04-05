@@ -13,4 +13,4 @@ class AuthorSerializer(serializers.HyperlinkedModelSerializer):
 class PublicationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Publication
-        fields = ('title', 'pub_date', 'author')
+        fields = ('title', 'pub_date', 'author', 'timestamp')

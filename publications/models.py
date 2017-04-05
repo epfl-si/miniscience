@@ -28,6 +28,7 @@ class Publication(models.Model):
     pub_date = models.DateField(null=True, blank=True)
     # XXX: add quotes to avoid error: ManyToManyField("Author")
     author = models.ManyToManyField(Author)
+    timestamp = models.IntegerField()
 
     def __str__(self):
         """ Standard function used to compute the “informal” string representation of an object.

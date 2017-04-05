@@ -15,5 +15,7 @@ urlpatterns = [
     url(r'^api/authors/$', views.AuthorList.as_view(), name='author-list'),
     url(r'^api/authors/(?P<pk>[0-9]+)/publications/$', views.author_publications),
     url(r'^api/authors/(?P<pk_author>[0-9]+)/publications/(?P<pk_publication>[0-9]+)/$', views.delete_link),
+    url(r'^api/importer/(?P<timestamp>[0-9]+)/$', views.importer_get),
+    url(r'^api/importer/$', views.importer_post),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

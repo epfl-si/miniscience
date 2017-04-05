@@ -1,4 +1,6 @@
 # (c) All rights reserved. ECOLE POLYTECHNIQUE FEDERALE DE LAUSANNE, Switzerland, VPSI, 2017
+from datetime import datetime
+
 from django.shortcuts import render
 from rest_framework import status
 
@@ -64,6 +66,37 @@ def delete_link(request, pk_author, pk_publication):
 
     publication.author.remove(author)
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['POST'])
+def importer_post(request):
+    title = request.data['title']
+    pub_date = request.data['pub_date']
+    authors = request.data['authors']
+
+    p = Publication(title=title, pub_date=pub_date, timestamp=datetime.now().timestamp())
+    p.save()
+
+    for author in authors:
+        first_name = author['first_name']
+        last_name = author['last_name']
+        email = author['email']
+
+        a = Author(first_name=first_name, last_name=last_name, email=email)
+        a.save()
+
+        p.author.add(a)
+
+    p.save()
+
+    return Response(status=HTTP_201_CREATED)
+
+
+@api_view(['GET'])
+def importer_get(request, timestamp):
+    queryset = Publication.objects.filter(timestamp__gt=timestamp)
+    serializer = PublicationSerializer(queryset, many=True, context={'request': request})
+    return Response(serializer.data)
 
 
 def index(request):
