@@ -1,5 +1,5 @@
 # MiniScience > README
-[![Travis built status](https://travis-ci.org/ffy/miniscience.svg?branch=master)](https://travis-ci.org/ffy/miniscience)
+[![Travis built status](https://travis-ci.org/epfl-idevelop/miniscience.svg?branch=master)](https://travis-ci.org/epfl-idevelop/miniscience)
 
 ## Overview
 
@@ -9,14 +9,35 @@ Create a publication cluster factory: from import to presentation to the author,
 
 ### How do I get set up? ###
 
+Either with Docker
+
 ```
-pip install -r requirements.txt
+cd miniscience/src
+make docker-init
+
+# or (if no make)
+cd miniscience
+docker-compose up -d
+docker exec web make init
+```
+
+Or without
+
+```
+make init run
+
+# or (if no make)
+python manage.py makemigrations
 python manage.py migrate
-python manage.py createsuperuser
-python manage.py runserver
+echo "from django.contrib.auth.models import User; User.objects.filter(email='admin@example.com').delete(); User.objects.create_superuser('admin', 'admin@example.com', 'admin123')" | python manage.py shell
+
 ```
 
 ### How do I check that everything went well ?
+
+Either go to [localhost](http://localhost:8000)
+
+Or (if the server runs localy) run the test
 
 ```
 python manage.py test
@@ -26,25 +47,23 @@ python manage.py test
 
 ## Objectives
 
-...
+Base repo for microservices that will suppor the factory-chain to create cluster of publications.
 
 ## Specifications
 
-...
+See [Trello board](https://trello.com/b/3Mq7J5sK/publichain)
 
 ## Ratings
 
 ### How do I rate the application ?
 
+Install pylint first (```pip install pylint```), and run
+
+```
+pylint miniscience publications
 ...
-
-### miniscience module
-Pylint score: 9.60/10
-
-### publications module
-Pylint score: 6.79/10
-
-(c) All rights reserved. ECOLE POLYTECHNIQUE FEDERALE DE LAUSANNE, Switzerland, VPSI, 2017
+Your code has been rated at 1.78/10
+```
 
 ## API documentation
 
@@ -198,3 +217,5 @@ Method: GET
 URL params: id_author=[integer], id_publication=[integer]  
 Data params: None  
 Response Codes: Success (200 OK), Failure (404 Not Found)
+
+(c) All rights reserved. ECOLE POLYTECHNIQUE FEDERALE DE LAUSANNE, Switzerland, VPSI, 2017
