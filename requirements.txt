@@ -2,7 +2,7 @@
 ######
 
 # Django
-django==1.8.4
+django<1.9
 
 # Rest apis
 djangorestframework==3.2.3
