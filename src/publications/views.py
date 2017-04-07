@@ -41,6 +41,8 @@ class PublicationViewSet(viewsets.ModelViewSet):
     serializer_class = PublicationSerializer
 
 
+# Commentaire pour démontrer Travis
+
 @api_view(['GET', 'POST'])
 def author_publications(request, pk):
     if request.method == 'GET':
