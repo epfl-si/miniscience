@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 
 from .models import Author, Publication
 from .serializers import AuthorSerializer, PublicationSerializer
+from .utils import do_request
 
 
 class AuthorList(APIView):
@@ -41,8 +42,6 @@ class PublicationViewSet(viewsets.ModelViewSet):
     serializer_class = PublicationSerializer
 
 
-# Commentaire pour démontrer Travis
-
 @api_view(['GET', 'POST'])
 def author_publications(request, pk):
     if request.method == 'GET':
@@ -71,7 +70,16 @@ def delete_link(request, pk_author, pk_publication):
 
 
 @api_view(['POST'])
-def importer_post(request):
+def importer(request):
+    faculty = request.data['faculty'].upper()
+
+    do_request("secret url")
+
+    return Response(status=HTTP_201_CREATED)
+
+
+@api_view(['POST'])
+def old_importer_post(request):
     title = request.data['title']
     pub_date = request.data['pub_date']
     authors = request.data['authors']
@@ -95,7 +103,7 @@ def importer_post(request):
 
 
 @api_view(['GET'])
-def importer_get(request, timestamp):
+def old_importer_get(request, timestamp):
     queryset = Publication.objects.filter(timestamp__gt=timestamp)
     serializer = PublicationSerializer(queryset, many=True, context={'request': request})
     return Response(serializer.data)
