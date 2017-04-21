@@ -69,13 +69,18 @@ def delete_link(request, pk_author, pk_publication):
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@api_view(['POST'])
+@api_view(['GET', 'POST'])
 def importer(request):
-    faculty = request.data['faculty'].upper()
+    if request.method == 'GET':
+        queryset = Publication.objects.filter(timestamp__gt=datetime.now().timestamp() - 60 * 30)
+        serializer = PublicationSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data)
+    else:
+        faculty = request.data['faculty'].upper()
 
-    do_request("secret url")
+        do_request("secret url")
 
-    return Response(status=HTTP_201_CREATED)
+        return Response(status=HTTP_201_CREATED)
 
 
 @api_view(['POST'])
@@ -103,8 +108,8 @@ def old_importer_post(request):
 
 
 @api_view(['GET'])
-def old_importer_get(request, timestamp):
-    queryset = Publication.objects.filter(timestamp__gt=timestamp)
+def importer_get(request):
+    queryset = Publication.objects.filter(timestamp__gt=datetime.now().timestamp() + 60 * 30)
     serializer = PublicationSerializer(queryset, many=True, context={'request': request})
     return Response(serializer.data)
 
