@@ -4,33 +4,20 @@ from django.db import models
 
 
 class Author(models.Model):
-    """ EPFL author? Cluster result ?
-        This class represents an author in the institutional archive.
-    """
-    # XXX: names length might be too small. Confirm from query on Infoscience DB (ask mysql dump to CFR or JD)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-    email = models.EmailField(blank=True)
+    """This class represents an author in the institutional archive."""
+    name = models.CharField(max_length=60)
+    surname = models.CharField(max_length=60)
 
     def __str__(self):
-        """ Standard function used to compute the “informal” string representation of an object.
-        """
-        return "%s %s (%s)" % (self.first_name, self.last_name, self.email)
+        return "%s %s" % (self.name, self.surname)
 
 
 class Publication(models.Model):
-    """ Record from Infoscience: set of metadata
-        TODO: add signatures and explain briefly difference between signatures and authors
-        TODO: add DOI to be able to identify a publication
-    """
-    # XXX: title length might be too small.
     title = models.CharField(max_length=200)
-    pub_date = models.DateField(null=True, blank=True)
-    # XXX: add quotes to avoid error: ManyToManyField("Author")
-    author = models.ManyToManyField(Author)
-    timestamp = models.IntegerField()
+    pub_date = models.DateField(blank=True, null=True)
+    doi = models.CharField(max_length=60, blank=True)
+    authors = models.ManyToManyField(Author, blank=True)
+    imported_datetime = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
-        """ Standard function used to compute the “informal” string representation of an object.
-        TODO: add DOI, (pub_date ?)"""
-        return "%s, %s" % (self.title, self.pub_date)
+        return self.title

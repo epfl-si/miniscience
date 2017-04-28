@@ -1,122 +1,61 @@
-# (c) All rights reserved. ECOLE POLYTECHNIQUE FEDERALE DE LAUSANNE, Switzerland, VPSI, 2017
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from django.shortcuts import render
-from rest_framework import status
+from django.utils import timezone
 
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.status import HTTP_201_CREATED
-from rest_framework.views import APIView
 
 from .models import Author, Publication
 from .serializers import AuthorSerializer, PublicationSerializer
 from .utils import do_request
 
 
-class AuthorList(APIView):
-    """
-    List all snippets, or create a new snippet.
-    """
-
-    def get(self, request, format=None):
-        authors = Author.objects.all()
-        serializer = AuthorSerializer(authors, many=True)
-        return Response(serializer.data)
-
-
 class AuthorViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = Author.objects.all().order_by('-first_name')
+    queryset = Author.objects.all()
     serializer_class = AuthorSerializer
 
 
 class PublicationViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
     queryset = Publication.objects.all()
     serializer_class = PublicationSerializer
 
 
 @api_view(['GET', 'POST'])
-def author_publications(request, pk):
+def author_publications(request, author_id):
     if request.method == 'GET':
-        queryset = Publication.objects.filter(author__id=pk)
-        serializer = PublicationSerializer(queryset, many=True, context={'request': request})
+        publications = Publication.objects.filter(authors__id=author_id)
+        serializer = PublicationSerializer(publications, many=True, context={'request': request})
         return Response(serializer.data)
 
     elif request.method == 'POST':
-        serializer = PublicationSerializer(data=request.data)
+        serializer = PublicationSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=HTTP_201_CREATED)
+            serializer.save(authors=[author_id])
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['DELETE'])
-def delete_link(request, pk_author, pk_publication):
+def author_publication(request, author_id, publication_id):
     try:
-        author = Author.objects.get(pk=pk_author)
-        publication = Publication.objects.get(pk=pk_publication)
+        author = Author.objects.get(id=author_id)
+        publication = Publication.objects.get(id=publication_id)
     except (Author.DoesNotExist, Publication.DoesNotExist):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    publication.author.remove(author)
+    publication.authors.remove(author)
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['GET', 'POST'])
 def importer(request):
     if request.method == 'GET':
-        queryset = Publication.objects.filter(timestamp__gt=datetime.now().timestamp() - 60 * 30)
+        queryset = Publication.objects.filter(imported_datetime__gt=timezone.now() - timedelta(minutes=30))
         serializer = PublicationSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
-    else:
+
+    elif request.method == 'POST':
         faculty = request.data['faculty'].upper()
-
-        do_request("secret url")
-
-        return Response(status=HTTP_201_CREATED)
-
-
-@api_view(['POST'])
-def old_importer_post(request):
-    title = request.data['title']
-    pub_date = request.data['pub_date']
-    authors = request.data['authors']
-
-    p = Publication(title=title, pub_date=pub_date, timestamp=datetime.now().timestamp())
-    p.save()
-
-    for author in authors:
-        first_name = author['first_name']
-        last_name = author['last_name']
-        email = author['email']
-
-        a = Author(first_name=first_name, last_name=last_name, email=email)
-        a.save()
-
-        p.author.add(a)
-
-    p.save()
-
-    return Response(status=HTTP_201_CREATED)
-
-
-@api_view(['GET'])
-def importer_get(request):
-    queryset = Publication.objects.filter(timestamp__gt=datetime.now().timestamp() + 60 * 30)
-    serializer = PublicationSerializer(queryset, many=True, context={'request': request})
-    return Response(serializer.data)
-
-
-def index(request):
-    context = {
-        'authors': Author.objects.all(),
-        'publications': Publication.objects.all()
-    }
-    return render(request, 'publications/index.html', context)
+        do_request("secret" + faculty + "url")
+        return Response(status=status.HTTP_201_CREATED)

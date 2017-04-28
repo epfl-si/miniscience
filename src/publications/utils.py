@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime
 
 from .models import Publication, Author
 
@@ -18,7 +17,7 @@ def do_request(url):
 
     old_id = 0
     count = 0
-    p = Publication(timestamp=datetime.now().timestamp())
+    p = Publication()
 
     for line in content:
         logging.debug("Parsing line %s", line)
@@ -26,7 +25,7 @@ def do_request(url):
 
         if current_id != old_id:  # New record
             p.save()
-            p = Publication(timestamp=datetime.now().timestamp())
+            p = Publication()
             count += 1
         else:  # Same record
             nb = line[10:13]
@@ -35,9 +34,9 @@ def do_request(url):
                 p.title = line[19:-1]
             elif nb == b'700':  # Author
                 p.save()
-                a = Author(first_name=line[19:-1])
-                a.save()
-                p.author.add(a)
+                a = Author(name=line[19:-1])
+                #a.save()
+                #p.authors.add(a)
 
         old_id = current_id
 
