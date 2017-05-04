@@ -17,14 +17,15 @@ def do_request(url):
 
     old_id = 0
     count = 0
-    p = Publication()
 
     for line in content:
         logging.debug("Parsing line %s", line)
         current_id = line[:9]
 
         if current_id != old_id:  # New record
-            p.save()
+            if count != 0:
+                p.save()
+
             p = Publication()
             count += 1
         else:  # Same record
@@ -35,9 +36,9 @@ def do_request(url):
             elif b'700' in nb:  # Author
                 p.save()
                 a = Author(name=line[19:-1])
-                #a.save()
-                #p.authors.add(a)
-            elif b'0247' in nb:
+                # a.save()
+                # p.authors.add(a)
+            elif b'0247' in nb:  # DOI
                 p.doi = line[25:-1]
 
         old_id = current_id
