@@ -49,13 +49,18 @@ def author_publication(request, author_id, publication_id):
 
 
 @api_view(['GET', 'POST'])
-def importer(request):
+def importer(request, **kwargs):
     if request.method == 'GET':
-        queryset = Publication.objects.filter(imported_datetime__gt=timezone.now() - timedelta(minutes=30))
+        if 'timestamp' in kwargs:
+            queryset = Publication.objects.filter(imported_datetime__gt=datetime.fromtimestamp(float(kwargs['timestamp'])))
+        else:
+            queryset = Publication.objects.filter(imported_datetime__gt=timezone.now() - timedelta(minutes=30))
+
         serializer = PublicationSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
 
     elif request.method == 'POST':
         faculty = request.data['faculty'].upper()
-        do_request("secret" + faculty + "url")
+        do_request(
+            "https://infoscience.epfl.ch/search?cc=Infoscience%2FResearch%2F" + faculty + "&ln=fr&as=1&ext=collection%3AARTICLE&rg=50&of=t&ot=001,700,245")
         return Response(status=status.HTTP_201_CREATED)
