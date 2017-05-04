@@ -28,15 +28,17 @@ def do_request(url):
             p = Publication()
             count += 1
         else:  # Same record
-            nb = line[10:13]
+            nb = line[10:15]
 
-            if nb == b'245':  # Title
+            if b'245' in nb:  # Title
                 p.title = line[19:-1]
-            elif nb == b'700':  # Author
+            elif b'700' in nb:  # Author
                 p.save()
                 a = Author(name=line[19:-1])
                 #a.save()
                 #p.authors.add(a)
+            elif b'0247' in nb:
+                p.doi = line[25:-1]
 
         old_id = current_id
 
