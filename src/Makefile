@@ -13,7 +13,7 @@ test:
 
 docker-init:
 	docker-compose up -d
-	docker exec make init
+	docker exec web make init
 
 docker-rebuild:
 	docker-compose down
