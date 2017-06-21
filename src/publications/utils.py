@@ -35,9 +35,34 @@ def do_request(url):
                 p.title = line[19:-1]
             elif b'700' in nb:  # Author
                 p.save()
-                a = Author(name=line[19:-1]) #  get_or_create
-                # a.save()
-                # p.authors.add(a)
+
+                line = line.decode('utf-8')
+                comma = line.find(',')
+                surname = line[19:comma]
+                name = line[comma+2:]
+                useless_begins = name.find('$$')
+                sciper_begins = name.find('$$g')
+
+                if sciper_begins != -1:
+                    sciper = name[sciper_begins+3: sciper_begins+3+6]
+                else:
+                    sciper = -1
+
+                if useless_begins != -1:
+                    name = name[:useless_begins]
+                else:
+                    name = name[:-1]
+
+                author, created = Author.objects.get_or_create(
+                    name=name,
+                    surname=surname
+                )
+
+                if created and sciper != -1:
+                    author.sciper = sciper
+                    author.save()
+
+                p.authors.add(author)
             elif b'0247' in nb:  # DOI
                 p.doi = line[25:-1]
             elif b'260' in nb:  # Publication year
@@ -45,7 +70,7 @@ def do_request(url):
                 pos = line.find('$$c')
 
                 if pos != -1:
-                    p.pub_date = line[pos + 3:]
+                    p.pub_date = line[pos+3:pos+3+4]
 
         old_id = current_id
 
