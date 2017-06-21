@@ -35,11 +35,17 @@ def do_request(url):
                 p.title = line[19:-1]
             elif b'700' in nb:  # Author
                 p.save()
-                a = Author(name=line[19:-1])
+                a = Author(name=line[19:-1]) #  get_or_create
                 # a.save()
                 # p.authors.add(a)
             elif b'0247' in nb:  # DOI
                 p.doi = line[25:-1]
+            elif b'260' in nb:  # Publication year
+                line = line.decode('utf-8')
+                pos = line.find('$$c')
+
+                if pos != -1:
+                    p.pub_date = line[pos + 3:]
 
         old_id = current_id
 

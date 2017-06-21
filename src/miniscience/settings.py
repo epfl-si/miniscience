@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'celery',
 ]
 
 MIDDLEWARE = [
@@ -128,3 +129,8 @@ REST_FRAMEWORK = {
     ],
     'PAGE_SIZE': 10
 }
+
+BROKER_URL = 'amqp://zxtmawyb:i3__oD2W8vyIlNQ8ekUiwFA1dWW4pQ4o@lark.rmq.cloudamqp.com/zxtmawyb'
+
+CELERY_RESULT_BACKEND = 'amqp://zxtmawyb:i3__oD2W8vyIlNQ8ekUiwFA1dWW4pQ4o@lark.rmq.cloudamqp.com/zxtmawyb'
+

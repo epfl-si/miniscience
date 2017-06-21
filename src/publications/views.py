@@ -61,5 +61,6 @@ def importer(request, **kwargs):
 
     elif request.method == 'POST':
         faculty = request.data['faculty'].upper()
-        do_request("secret" + faculty + "url")
+        rg = request.data['rg']
+        do_request("https://infoscience.epfl.ch/search?cc=Infoscience%2FResearch%2F" + faculty + "&rg=" + rg + "&ln=fr&as=1&ext=collection%3AARTICLE&rg=50&of=t&ot=001,700,245,0247,260")
         return Response(status=status.HTTP_201_CREATED)

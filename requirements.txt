@@ -1,8 +1,9 @@
+celery
 # BASE
 ######
 
 # Django
-django<1.9
+django<1.12
 
 # Rest apis
 djangorestframework==3.2.3
