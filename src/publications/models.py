@@ -7,6 +7,7 @@ class Author(models.Model):
     """This class represents an author in the institutional archive."""
     name = models.CharField(max_length=60)
     surname = models.CharField(max_length=60)
+    sciper = models.PositiveIntegerField(null=True, blank=True)
 
     def __str__(self):
         return "%s %s" % (self.name, self.surname)
@@ -14,7 +15,7 @@ class Author(models.Model):
 
 class Publication(models.Model):
     title = models.CharField(max_length=200)
-    pub_date = models.DateField(blank=True, null=True)
+    pub_date = models.IntegerField(blank=True, null=True)
     doi = models.CharField(max_length=60, blank=True)
     authors = models.ManyToManyField(Author, blank=True)
     imported_datetime = models.DateTimeField(auto_now_add=True, null=True)
