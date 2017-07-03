@@ -1,4 +1,5 @@
 import logging
+from difflib import SequenceMatcher
 
 from wos import WosClient
 import wos.utils
@@ -14,6 +15,10 @@ try:
 except ImportError:
     # python 2.7
     from urllib2 import urlopen
+
+
+def similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
 
 
 def do_request(url):
@@ -45,12 +50,12 @@ def do_request(url):
                 line = line.decode('utf-8')
                 comma = line.find(',')
                 surname = line[19:comma]
-                name = line[comma+2:]
+                name = line[comma + 2:]
                 useless_begins = name.find('$$')
                 sciper_begins = name.find('$$g')
 
                 if sciper_begins != -1:
-                    sciper = name[sciper_begins+3: sciper_begins+3+6]
+                    sciper = name[sciper_begins + 3: sciper_begins + 3 + 6]
                 else:
                     sciper = -1
 
@@ -76,11 +81,12 @@ def do_request(url):
                 pos = line.find('$$c')
 
                 if pos != -1:
-                    p.pub_date = line[pos+3:pos+3+4]
+                    p.pub_date = line[pos + 3:pos + 3 + 4]
 
         old_id = current_id
 
     logger.info("Fetched %d records", count)
+
 
 def parse_wos(req):
     with WosClient(lite=True) as client:
@@ -99,11 +105,10 @@ def parse_wos(req):
             if author.text != 'Authors':
                 comma_pos = author.text.find(',')
                 a, created = Author.objects.get_or_create(
-                    name=author.text[comma_pos+2:],
+                    name=author.text[comma_pos + 2:],
                     surname=author.text[:comma_pos]
                 )
                 authors_list.append(a)
-
 
     for source in root.iter('source'):
         if source[0].text == 'Published.BiblioYear':
@@ -123,23 +128,34 @@ def parse_wos(req):
 
     logger.info("Added publication: %s (%s)" % (title, doi))
 
-# Returns:  -1  if publication already exists
-#           0   if not sure
-#           1   if publication doesn't exist
-def check(publication):
-    if hasattr(publication, 'doi'):
-        doi_exists = True
-        if doi_exists:
-            return -1
 
-    if hasattr(publication, 'title'):
-        title_exists = True
-        authors_same = True
+class Comparator:
+    SAME_DOI = 1
+    SAME_TITLE_SAME_AUTHORS = 2
+    SAME_TITLE_DIFFERENT_AUTHORS = 3
+    NO_SIMILAR_TITLE = 4
+    NO_DOI_AND_TITLE = 5
 
-        if title_exists:
-            if authors_same:
-                return -1
-            else:
-                return 0
+    # Returns:  -1  if publication doesn't exist
+    #           0   if not sure
+    #           1   if publication already exists
+    def check(self, publication):
+        if hasattr(publication, 'doi'):
+            try:
+                Publication.objects.get(doi=publication.doi)
+            except Publication.DoesNotExist:
+                return 1, self.SAME_DOI
 
-    return 1
+        if hasattr(publication, 'title'):
+            publications = Publication.objects.all()
+
+            for p2 in publications:
+                if similar(publication.title, p2.title) >= .9:
+                    if publication.authors == p2.auhors:
+                        return 1, self.SAME_TITLE_SAME_AUTHORS
+                    else:
+                        return 0, self.SAME_TITLE_DIFFERENT_AUTHORS
+
+            return -1, self.NO_SIMILAR_TITLE
+
+        return 0, self.NO_DOI_AND_TITLE
