@@ -6,7 +6,10 @@ celery
 django<1.12
 
 # Rest apis
-djangorestframework==3.2.3
+djangorestframework==3.6.3
+
+# Web of Science client
+wos==0.1.11
 
 # TEST
 ######

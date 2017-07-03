@@ -1,4 +1,4 @@
-FROM python:3.5
+FROM python:3.6
 
 # fist copy only requirements.txt, and run pip install
 # this enable better caching when building the image
@@ -7,5 +7,5 @@ WORKDIR /app
 RUN pip install -r requirements.txt
 
 ADD . /app
-VOLUME ["/app/src", "app/var"]
+VOLUME ["/app/src", "/app/var"]
 WORKDIR /app/src
