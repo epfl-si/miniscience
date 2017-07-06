@@ -28,8 +28,10 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^authors/(?P<author_id>[0-9]+)/publications/$', views.author_publications),
     url(r'^authors/(?P<author_id>[0-9]+)/publications/(?P<publication_id>[0-9]+)/$', views.author_publication),
-    url(r'^importer/$', views.importer),
-    url(r'^importer/(?P<timestamp>[0-9]+)/$', views.importer),
+    url(r'^importer_infoscience/$', views.importer_infoscience),
+    url(r'^importer_wos/$', views.importer_wos),
+    url(r'^importer_infoscience/(?P<timestamp>[0-9]+)/$', views.importer_infoscience),
+    url(r'^importer_wos/(?P<timestamp>[0-9]+)/$', views.importer_wos),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^admin/', admin.site.urls),
 ]

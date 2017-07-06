@@ -21,7 +21,7 @@ def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
 
 
-def do_request(url):
+def parse_infoscience(url):
     """read content from given url, which can be either an http or file one"""
     logger.info("Fetching %s", url)
     content = urlopen(url)
@@ -29,6 +29,7 @@ def do_request(url):
     old_id = 0
     count = 0
 
+    authors_list = []
     for line in content:
         logging.debug("Parsing line %s", line)
         current_id = line[:9]
@@ -36,6 +37,9 @@ def do_request(url):
         if current_id != old_id:  # New record
             if count != 0:
                 p.save()
+                for author in authors_list:
+                    p.authors.add(author)
+                authors_list = []
 
             p = Publication()
             count += 1
@@ -45,8 +49,6 @@ def do_request(url):
             if b'245' in nb:  # Title
                 p.title = line[19:-1]
             elif b'700' in nb:  # Author
-                p.save()
-
                 line = line.decode('utf-8')
                 comma = line.find(',')
                 surname = line[19:comma]
@@ -73,7 +75,7 @@ def do_request(url):
                     author.sciper = sciper
                     author.save()
 
-                p.authors.add(author)
+                authors_list.append(author)
             elif b'0247' in nb:  # DOI
                 p.doi = line[25:-1]
             elif b'260' in nb:  # Publication year
@@ -88,45 +90,58 @@ def do_request(url):
     logger.info("Fetched %d records", count)
 
 
-def parse_wos(req):
-    with WosClient(lite=True) as client:
-        res = wos.utils.query(client, req, count=2, limit=1)
+def parse_wos(req, debug=False):
+    if not debug:
+        with WosClient(lite=True) as client:
+            res = wos.utils.query(client, req, count=2, limit=1)
 
-    print(res)
+        print(res)
 
-    root = ET.fromstring(res)
+        root = ET.fromstring(res)
+    else:
+        tree = ET.parse('ex_wos.xml')
+        root = tree.getroot()
+
+    publications = []
 
     for title in root.iter('title'):
-        title = title[1].text
+        p = Publication()
+        p.title = title[1].text
+        publications.append(p)
 
-    authors_list = []
-    for authors in root.iter('authors'):
-        for author in authors:
-            if author.text != 'Authors':
-                comma_pos = author.text.find(',')
-                a, created = Author.objects.get_or_create(
-                    name=author.text[comma_pos + 2:],
-                    surname=author.text[:comma_pos]
-                )
-                authors_list.append(a)
+    # authors_list = []
+    # for authors in root.iter('authors'):
+    #     for author in authors:
+    #         if author.text != 'Authors':
+    #             comma_pos = author.text.find(',')
+    #             a, created = Author.objects.get_or_create(
+    #                 name=author.text[comma_pos + 2:],
+    #                 surname=author.text[:comma_pos]
+    #             )
+    #             authors_list.append(a)
 
+    count = 0
     for source in root.iter('source'):
         if source[0].text == 'Published.BiblioYear':
-            year = int(source[1].text)
+            publications[count].pub_date = int(source[1].text)
+            count += 1
 
+    count = 0
     for other in root.iter('other'):
         if other[0].text == 'Identifier.Xref_Doi':
-            doi = other[1].text
+            publications[count].doi = other[1].text
+            count += 1
 
-    p = Publication(title=title, pub_date=year, doi=doi)
-    p.save()
-
-    for author in authors:
-        p.authors.add(author)
-
-    print('Title: %s\nYear: %d\nDOI: %s\nAuthors: %s' % (title, year, doi, authors_list))
-
-    logger.info("Added publication: %s (%s)" % (title, doi))
+    c = Comparator()
+    for pub in publications:
+        check = c.check(pub)
+        print(check)
+        if check[0] == -1:
+            print("j'enregistre")
+            pub.save()
+            # for author in authors_list:
+            #     p.authors.add(author)
+            logger.info("Added publication: %s (%s)" % (pub.title, pub.doi))
 
 
 class Comparator:
@@ -135,6 +150,7 @@ class Comparator:
     SAME_TITLE_DIFFERENT_AUTHORS = 3
     NO_SIMILAR_TITLE = 4
     NO_DOI_AND_TITLE = 5
+    DOI_NOT_FOUND = 6
 
     # Returns:  -1  if publication doesn't exist
     #           0   if not sure
@@ -143,18 +159,20 @@ class Comparator:
         if hasattr(publication, 'doi'):
             try:
                 Publication.objects.get(doi=publication.doi)
-            except Publication.DoesNotExist:
                 return 1, self.SAME_DOI
+            except Publication.DoesNotExist:
+                return -1, self.DOI_NOT_FOUND
 
         if hasattr(publication, 'title'):
             publications = Publication.objects.all()
 
             for p2 in publications:
                 if similar(publication.title, p2.title) >= .9:
-                    if publication.authors == p2.auhors:
-                        return 1, self.SAME_TITLE_SAME_AUTHORS
-                    else:
-                        return 0, self.SAME_TITLE_DIFFERENT_AUTHORS
+                    return 1
+                    # if publication.authors == p2.auhors:
+                    #     return 1, self.SAME_TITLE_SAME_AUTHORS
+                    # else:
+                    #     return 0, self.SAME_TITLE_DIFFERENT_AUTHORS
 
             return -1, self.NO_SIMILAR_TITLE
 
