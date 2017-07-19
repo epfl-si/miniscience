@@ -3,7 +3,7 @@
     <uid>WOS:000072572500003</uid>
     <title>
         <label>Title</label>
-        <value>The past, present, and future of image and multidimensional signal processing</value>
+        <value>A fibre-based frame element with explicit consideration of bond-slip effects</value>
     </title>
     <doctype>
         <label>Doctype</label>
@@ -67,7 +67,7 @@
     </other>
     <other>
         <label>Identifier.Xref_Doi</label>
-        <value>1234245.DOI</value>
+        <value>DOI:FDNSJFD73834873</value>
     </other>
     <other>
         <label>ResearcherID.Disclaimer</label>
@@ -77,7 +77,7 @@
     <uid>WOS:000072572500003</uid>
     <title>
         <label>Title</label>
-        <value>New publication blabla</value>
+        <value>Development of Naturally Buckling Steel Braces</value>
     </title>
     <doctype>
         <label>Doctype</label>
@@ -109,11 +109,9 @@
     </source>
     <authors>
         <label>Authors</label>
-        <value>Chellappa, R</value>
-        <value>Girod, B</value>
-        <value>Munson, DC</value>
-        <value>Tekalp, M</value>
-        <value>Vetterli, M</value>
+        <value>Fyfer, Frede</value>
+        <value>Delasoie, Julien</value>
+        <value>Lefrançois, Eric</value>
     </authors>
     <other>
         <label>Contributor.ResearcherID.Names</label>
@@ -141,7 +139,7 @@
     </other>
     <other>
         <label>Identifier.Xref_Doi</label>
-        <value>AAAAAAAAAAH:DOI</value>
+        <value></value>
     </other>
     <other>
         <label>ResearcherID.Disclaimer</label>

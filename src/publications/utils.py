@@ -109,16 +109,19 @@ def parse_wos(req, debug=False):
         p.title = title[1].text
         publications.append(p)
 
-    # authors_list = []
-    # for authors in root.iter('authors'):
-    #     for author in authors:
-    #         if author.text != 'Authors':
-    #             comma_pos = author.text.find(',')
-    #             a, created = Author.objects.get_or_create(
-    #                 name=author.text[comma_pos + 2:],
-    #                 surname=author.text[:comma_pos]
-    #             )
-    #             authors_list.append(a)
+    count = 0
+    for authors in root.iter('authors'):
+        authors_list = []
+        for author in authors:
+            if author.text != 'Authors':
+                comma_pos = author.text.find(',')
+                a = Author(
+                    name=author.text[comma_pos + 2:],
+                    surname=author.text[:comma_pos]
+                )
+                authors_list.append(a)
+        publications[count].authors_list = authors_list
+        count += 1
 
     count = 0
     for source in root.iter('source'):
@@ -135,12 +138,15 @@ def parse_wos(req, debug=False):
     c = Comparator()
     for pub in publications:
         check = c.check(pub)
-        print(check)
         if check[0] == -1:
-            print("j'enregistre")
             pub.save()
-            # for author in authors_list:
-            #     p.authors.add(author)
+            for a in pub.authors_list:
+                au, created = Author.objects.get_or_create(
+                    name=a.name,
+                    surname=a.surname
+                )
+                pub.authors.add(au)
+
             logger.info("Added publication: %s (%s)" % (pub.title, pub.doi))
 
 
@@ -151,15 +157,18 @@ class Comparator:
     NO_SIMILAR_TITLE = 4
     NO_DOI_AND_TITLE = 5
     DOI_NOT_FOUND = 6
+    SAME_TITLE_SAME_YEAR_SAME_AUTHORS = 7
+    SAME_TITLE_DIFFERENT_YEARS = 8
+    SAME_TITLE_SAME_YEAR_DIFFERENT_AUTHORS = 9
 
     # Returns:  -1  if publication doesn't exist
     #           0   if not sure
     #           1   if publication already exists
     def check(self, publication):
-        if hasattr(publication, 'doi'):
+        if hasattr(publication, 'doi') and publication.doi is not None:
             try:
-                Publication.objects.get(doi=publication.doi)
-                return 1, self.SAME_DOI
+                p = Publication.objects.get(doi=publication.doi)
+                return 1, self.SAME_DOI, p.id
             except Publication.DoesNotExist:
                 return -1, self.DOI_NOT_FOUND
 
@@ -167,12 +176,14 @@ class Comparator:
             publications = Publication.objects.all()
 
             for p2 in publications:
-                if similar(publication.title, p2.title) >= .9:
-                    return 1
-                    # if publication.authors == p2.auhors:
-                    #     return 1, self.SAME_TITLE_SAME_AUTHORS
-                    # else:
-                    #     return 0, self.SAME_TITLE_DIFFERENT_AUTHORS
+                if similar(publication.title, p2.title) >= .95:
+                    if publication.pub_date == p2.pub_date:
+                        if publication.authors_list == p2.authors:
+                            return 1, self.SAME_TITLE_SAME_YEAR_SAME_AUTHORS, p2.id
+                        else:
+                            return 0, self.SAME_TITLE_SAME_YEAR_DIFFERENT_AUTHORS, p2.id
+                    else:
+                        return 0, self.SAME_TITLE_DIFFERENT_YEARS, p2.id
 
             return -1, self.NO_SIMILAR_TITLE
 

@@ -84,4 +84,3 @@ def importer_wos(request, **kwargs):
         req = request.data['req']
         parse_wos(req, debug=True)
         return Response(status=status.HTTP_201_CREATED)
-
