@@ -82,5 +82,9 @@ def importer_wos(request, **kwargs):
 
     elif request.method == 'POST':
         req = request.data['req']
-        parse_wos(req, debug=True)
+        try:
+            percentage = float(request.data['percentage'])
+        except KeyError:
+            percentage = .95
+        parse_wos(req, percentage, debug=True)
         return Response(status=status.HTTP_201_CREATED)

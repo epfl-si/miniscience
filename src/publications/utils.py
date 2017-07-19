@@ -90,7 +90,7 @@ def parse_infoscience(url):
     logger.info("Fetched %d records", count)
 
 
-def parse_wos(req, debug=False):
+def parse_wos(req, percentage, debug=False):
     if not debug:
         with WosClient(lite=True) as client:
             res = wos.utils.query(client, req, count=2, limit=1)
@@ -137,7 +137,7 @@ def parse_wos(req, debug=False):
 
     c = Comparator()
     for pub in publications:
-        check = c.check(pub)
+        check = c.check(pub, percentage)
         if check[0] == -1:
             pub.save()
             for a in pub.authors_list:
@@ -164,7 +164,7 @@ class Comparator:
     # Returns:  -1  if publication doesn't exist
     #           0   if not sure
     #           1   if publication already exists
-    def check(self, publication):
+    def check(self, publication, percentage):
         if hasattr(publication, 'doi') and publication.doi is not None:
             try:
                 p = Publication.objects.get(doi=publication.doi)
@@ -176,7 +176,7 @@ class Comparator:
             publications = Publication.objects.all()
 
             for p2 in publications:
-                if similar(publication.title, p2.title) >= .95:
+                if similar(publication.title, p2.title) >= percentage:
                     if publication.pub_date == p2.pub_date:
                         if publication.authors_list == p2.authors:
                             return 1, self.SAME_TITLE_SAME_YEAR_SAME_AUTHORS, p2.id
